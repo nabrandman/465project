@@ -10,10 +10,10 @@ wire [31:0]out1m;
 wire [31:0]out2m;
 wire [31:0]out4m;
 wire [31:0]out8m;
-wire [31:0]shift;
+wire [4:0]shift;
 genvar i;
 
-for (i = 0; i < 6; i = i + 1) begin
+for (i = 0; i < 5; i = i + 1) begin
     assign shift[i] = b[i] ^ aorl;
 end
 

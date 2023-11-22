@@ -1,4 +1,6 @@
-module fulladder32 (input [31:0]a, input [31:0]b, input cin, inout [30:0]carry, output [31:0]s, output cout);
+module fulladder32 (input [31:0]a, input [31:0]b, input cin, output [31:0]s, output cout);
+
+wire [30:0]carry;
 //a & b are numbers to be added, s is sum, cin/out are carry in/out, carry is what takes each 1-bit adders carry out to the next 1-bit adders carry in
     genvar i;
     adder u0 (.a (a[0]), .b (b[0]), .cin (cin), .s (s[0]), .cout (carry[0])); // 1st adder w/ lsb of a & b, carry-in, gives out lsb of sum & carry out into 1st carry wire

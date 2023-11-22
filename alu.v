@@ -1,4 +1,6 @@
-module alu (input [31:0]a, input [31:0]b, input in_en, input clk, input [4:0]ctrl, output [31:0]y, output cout);
+`timescale 1ns/1ps
+
+module alu (input [31:0]a, input [31:0]b, input clk, input [4:0]ctrl, output [31:0]y, output cout);
 //inputs are a & b (either imm or reg), and ctrl which is used to select which operation to perform
 //ouputs are carry-out and the actual output of the operation
 
@@ -26,7 +28,6 @@ wire [31:0]rvi;
 wire [31:0]product;
 wire [31:0]divrem;
 wire [31:0]rvm;
-reg [31:0]out;
 reg [4:0]ctrl_r;
 
 
@@ -39,22 +40,22 @@ end
 
 /*CTRL Codes:
 instrbit:[30][25] [14:12]
-   add =  0    0     000
-   sll =  0    0     001
-   xor =  0    0     100
-   srl =  0    0     101
-    or =  0    0     110
-   and =  0    0     111
-   mul =  0    1     000
-  mulh =  0    1     001
-mulhsu =  0    1     010
- mulhu =  0    1     011
-   div =  0    1     100
-  divu =  0    1     101
-   rem =  0    1     110
-  remu =  0    1     111
-   sub =  1    0     000
-   sra =  1    0     101
+   add =  0    0     000 = 0
+   sll =  0    0     001 = 1
+   xor =  0    0     100 = 4
+   srl =  0    0     101 = 5
+    or =  0    0     110 = 6
+   and =  0    0     111 = 7
+   mul =  0    1     000 = 8
+  mulh =  0    1     001 = 9
+mulhsu =  0    1     010 = 10
+ mulhu =  0    1     011 = 11
+   div =  0    1     100 = 12
+  divu =  0    1     101 = 13
+   rem =  0    1     110 = 14
+  remu =  0    1     111 = 15
+   sub =  1    0     000 = -16
+   sra =  1    0     101 = -11
 */
 
 
@@ -64,10 +65,10 @@ and32 and0 (.a (a_r), .b (muxb), .y (midand));
 or32 or0 (.a (a_r), .b (muxb), .y (midor));
 xor32 xor0 (.a (a_r), .b (muxb), .y (midxor));
 rightshiftb shiftright0 (.a (a_r), .b (muxb[4:0]), .aorl (ctrl_r[4]), .out (rshift));
-leftshift leftshift0 (.a (a_r), .b (b[4:0]), .clk (clk), .in_en (in_en), .out (lshift));
+leftshift leftshift0 (.a (a_r), .b (b[4:0]), .clk (clk), .ctrl (ctrl_r), .out (lshift), .out_en ());
 
-mult mult0 (.a (a_r), .b (b_r), .clk (clk), .sign (ctrl_r[1:0]), .lower (lowmult), .higher (highmult));
-divider div0 (.a (a_r), .b (b_r), .clk (clk), .in_en (in_en), .q (quotient), .r(remainder));
+mult mult0 (.a (a_r), .b (b_r), .clk (clk), .ctrl (ctrl_r), .lower (lowmult), .higher (highmult));
+divider div0 (.a (a_r), .b (b_r), .clk (clk), .ctrl (ctrl_r), .q (quotient), .r(remainder));
 
 
 
@@ -81,6 +82,5 @@ mux highlow0 (.a (highmult), .b (lowmult), .ctrl (highlow), .out (product));
 mux divrem0 (.a (remainder), .b (quotient), .ctrl (ctrl_r[1]), .out (divrem));
 mux RV32M (.a (divrem), .b (product), .ctrl (ctrl_r[2]), .out (rvm));
 mux final (.a (rvm), .b (rvi), .ctrl (ctrl_r[3]), .out (y));
-
 
 endmodule

@@ -10,6 +10,11 @@ module tb_fulladder32;
 
     fulladder32 u0 ( .a (a), .b (b), .cin (cin), .cout (cout), .s (s)); //initialize 32-bit adder module
 
+    wire [31:0]negb;
+    wire [31:0]negs;
+
+    assign negb = ~b + 1;
+    assign negs = ~s + 1;
     initial begin
         for (i = -5; i < 6; i = i+1) begin
             for (j = -5; j < 6; j = j+1) begin
@@ -18,7 +23,7 @@ module tb_fulladder32;
                          b = j;
                          cin = k;
                     //loops over cin = 0 or 1 (all possibilites) while inputs range from -5 to 5 to ensure proper behaviour for + & - numbers
-                    $monitor ("a=0x%0d b=0x%0d cin=0x%0d s=0x%0d cout=0x%0d", a, b, cin, s, cout);
+                    $monitor ("a=%0d b=%0d, negb=-%d, cin=%0d, s=%0d, negs = -%d, cout=%0d", a, b, negb, cin, s, negs, cout);
 
                 end
             end
